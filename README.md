@@ -7,11 +7,13 @@ The results from the paper can be found (in CSV format) in the "results" directo
 ## Compilation & Requirements
  To compile the programs you will need a few things. The first is a C++ compiler that supports the C++11 standard, and the second is CMake (version >= 3.5.x), which is the build system used. The code has only been tested using the default GCC (G++), and CMake installation under Ubuntu 16.04, though anything meeting the previous requirements should work. With this in mind, compilation can be done the usual CMake way. For example, let's assume we are using GNU Linux system, and we're in the root directory for this project:
 
-> mkdir bin
-> cd bin
-> cmake ../ -DCMAKE_BUILD_TYPE=Release
-> make all
-> ./programs/logarithmic_fold  ../data_tables/
+```
+mkdir bin
+cd bin
+cmake ../ -DCMAKE_BUILD_TYPE=Release
+make all
+./programs/logarithmic_fold  ../data_tables/
+```
 
 ## Programs
 ### Input & Output Format
@@ -23,23 +25,25 @@ All the folding programs expect a single argument on command line. This is the r
 #### Logarithmic Fold Program
 This program (logarithmic_fold) does MFE folding under the Turner 1999 logarithmic model of and parameters for multi-loops (see [Nearest Neighbor Database](http://rna.urmc.rochester.edu/NNDB/turner99/mb.html)). It expects a series of whitespace separated strings as input. Each string should be a primary sequence to be folded. For each primary sequence, the output will be 3 lines. The first will be the parsed version of the primary sequence (where 'X' denotes an unknown nucleotide), the second will be the MFE value, and the third will be a dot-bracket MFE structure. Here is an example usage:
 
-> ./the_build_directory/logarithmic_fold data-tables/
-> GAUCGAUCGACJJJJJJJXXXXauguagcuacgCCCCCC
+```
+./the_build_directory/logarithmic_fold data-tables/
+GAUCGAUCGACJJJJJJJXXXXauguagcuacgCCCCCC
 > GAUCGAUCGACXXXXXXXXXXXXXXXXXXXXXXCCCCCC
 > 0 kcal/mol
 > .......................................
-> GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAcgugcuagcuagcugaucguGCUACGUAGCUACGGCGCGCCCCC
+GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAcgugcuagcuagcugaucguGCUACGUAGCUACGGCGCGCCCCC
 > GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAXXXXXXXXXXXXXXXXXXXXGCUACGUAGCUACGGCGCGCCCCC
 > -27.5 kcal/mol
 > ((((...(((..((((..((((((((((.......................))))))))))..))))))))))).
-> GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
+GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
 > GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
 > -50 kcal/mol
 > ((((((((((((((((((...)))))))))))))))))).
-> GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
+GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > -48.2 kcal/mol
 > (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))....))).
+```
 
 The time and space complexities are O(n^4) and O(n^3) respectively, so be careful about accidentally allocating all your RAM folding a 10k nt RNA.
 
@@ -47,46 +51,50 @@ The time and space complexities are O(n^4) and O(n^3) respectively, so be carefu
 #### Aalberts & Nandagopal Fold Program
 This program (an_fold) does MFE folding under the Aalberts & Nandagopal multi-loop model (see [Nearest Neighbor Database](http://rna.urmc.rochester.edu/NNDB/turner99/mb.html)). It expects a series of whitespace separated strings as input. Each string should be a primary sequence to be folded. For each primary sequence, the output will be 3 lines. The first will be the parsed version of the primary sequence (where 'X' denotes an unknown nucleotide), the second will be the MFE value, and the third will be a dot-bracket MFE structure. Here is an example usage:
 
-> ./the_build_directory/an_fold data-tables/
-> GAUCGAUCGACJJJJJJJXXXXauguagcuacgCCCCCC
+```
+./the_build_directory/an_fold data-tables/
+GAUCGAUCGACJJJJJJJXXXXauguagcuacgCCCCCC
 > GAUCGAUCGACXXXXXXXXXXXXXXXXXXXXXXCCCCCC
 > 0 kcal/mol
 > .......................................
-> GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAcgugcuagcuagcugaucguGCUACGUAGCUACGGCGCGCCCCC
+GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAcgugcuagcuagcugaucguGCUACGUAGCUACGGCGCGCCCCC
 > GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAXXXXXXXXXXXXXXXXXXXXGCUACGUAGCUACGGCGCGCCCCC
 > -27.5 kcal/mol
 > ((((...(((..((((..((((((((((.......................))))))))))..))))))))))).
-> GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
+GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
 > GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
 > -50 kcal/mol
 > ((((((((((((((((((...)))))))))))))))))).
-> GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
+GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > -49.8 kcal/mol
 > (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
+```
 
 The time and space complexities are O(n^5) and O(n^4) respectively. This means that folding RNAs of more than about 200 nts can take minutes (or conceivably hours on a slow machine), and require gigabytes of RAM, so be careful.
 
 #### Linear Fold Program
 This program (linear_fold) does MFE folding under the typical linear model with the Turner 2004 parameters, which are those used by RNAstructure 5.8. It expects a series of whitespace separated strings as input. Each string should be a primary sequence to be folded. For each primary sequence, the output will be 3 lines. The first will be the parsed version of the primary sequence (where 'X' denotes an unknown nucleotide), the second will be the MFE value, and the third will be a dot-bracket MFE structure. Here is an example usage:
 
-> ./the_build_directory/linear_fold data-tables/
-> GAUCGAUCGACJJJJJJJXXXXauguagcuacgCCCCCC
+```
+./the_build_directory/linear_fold data-tables/
+GAUCGAUCGACJJJJJJJXXXXauguagcuacgCCCCCC
 > GAUCGAUCGACXXXXXXXXXXXXXXXXXXXXXXCCCCCC
 > 0 kcal/mol
 > .......................................
-> GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAcgugcuagcuagcugaucguGCUACGUAGCUACGGCGCGCCCCC
+GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAcgugcuagcuagcugaucguGCUACGUAGCUACGGCGCGCCCCC
 > GGGGAUAUGCUAGCUGAUGCUACGUAGCUGAXXXXXXXXXXXXXXXXXXXXGCUACGUAGCUACGGCGCGCCCCC
 > -27.5 kcal/mol
 > ((((...(((..((((..((((((((((.......................))))))))))..))))))))))).
-> GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
+GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
 > GGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCC
 > -50 kcal/mol
 > ((((((((((((((((((...)))))))))))))))))).
-> GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
+GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > -48.4 kcal/mol
 > (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
+```
 
 This program can be a bit slower than expected, as it is done by emulation via the logarithmic folding algorithm.
 
@@ -95,27 +103,39 @@ These programs take an RNA sequence and a structure and calculate the expected f
 
 #### Logarithmic Energy Calculator
 This program (logarithmic_efn) scores energy using the logarithmic model (see above). Here is an example usage:
-> GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
-> (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))....))).
+
+```
+./the_build_directory/logarithmic_efn data-tables/
+GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
+(((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))....))).
 > GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))....))).
 > -48.2 kcal/mol
+```
 
 #### Aalberts & Nandagopal Energy Calculator
 This program (an_efn) scores energy using the Aalberts & Nandagopal model (see above). Here is an example usage:
-> GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
-> (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
+
+```
+./the_build_directory/an_efn data-tables/
+GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
+(((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
 > GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
 > -49.8 kcal/mol
+```
 
 #### Linear Energy Calculator
 This program (linear_efn) scores energy using the linear model (see above). Here is an example usage:
-> GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
-> (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
+
+```
+./the_build_directory/linear_efn data-tables/
+GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
+(((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
 > GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCCCCCC
 > (((.(((((....)))))((((((((((((..(((((((((............)))))))))..))))))))))))..)))...
 > -48.4 kcal/mol
+```
 
 ### A Note on data_tables
 A common usage mistake is incorrectly providing the relative path to the data_tables directory to the executables. If you are getting strange looking structures with odd free energies, this is the most likely cause.
