@@ -139,3 +139,115 @@ GGGUGAUGUGGGUACGUCGGGGGGAAAAAACCCCCCCCCCCCCCAAAAAAAAAGGGGGGGGGUUUUUUUUCCCCCCCCCC
 
 ### A Note on data_tables
 A common usage mistake is incorrectly providing the relative path to the data_tables directory to the executables. If you are getting strange looking structures with odd free energies, this is the most likely cause.
+
+### Samples From the Paper
+In the paper, two sample RNA folds are given (Figures 1 and 2). We shall reproduce them here to complete the tutorial. Obviously, with the full database, our full set of results could easily be reproduced the same way.
+
+
+#### Figure 1
+Consider the tRNA found in Figure 1 of the paper (Sprinzl ID RA1661):
+
+```
+GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
+((((((...((((........)))).(((((.......))))).....(((((.......))))).))))))...
+```
+
+Here is how to reproduce the linear folding:
+
+```
+./the_build_directory/linear_fold data_tables/
+GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
+> GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
+> -30.9 kcal/mol
+> ((((((...((((........)))).(((((.......))))).....(((((.......))))).))))))....
+```
+
+And the logarithmic folding:
+
+```
+./the_build_directory/logarithmic_fold data_tables/
+GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
+> GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
+> -30.2 kcal/mol
+> ..((((...))))...((((((.((((.......((.(((((.....)))))))........)))).))))))...
+```
+
+Out of interest, lets get an energy breakdown of the linear model's result, but using the logarithmic model's energy calculator. This will score any multi-loops in the linear prediction as though they had a logarithmic energy function.
+
+```
+GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
+((((((...((((........)))).(((((.......))))).....(((((.......))))).))))))....
+> GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
+> ((((((...((((........)))).(((((.......))))).....(((((.......))))).))))))....
+> -30.1 kcal/mol
+> External-loop: -17/-301
+> AU/GU penalties: 0
+> Stacking: -17
+> Stacking(0, 71, 3' dangle) 
+>  Two-loop closed by (0, 71) and (1, 70): -33/-284
+>   Two-loop closed by (1, 70) and (2, 69): -33/-251
+>    Two-loop closed by (2, 69) and (3, 68): -15/-218
+>     Two-loop closed by (3, 68) and (4, 67): -21/-203
+>      Two-loop closed by (4, 67) and (5, 66): -34/-182
+>       Multi-loop closed by (5, 66): 9/-148
+>       AU/GU penalties: 5
+>       Multi-loop closure: 77
+>       Multi-loop closure featues: branches=4 unpaired=10 
+>      Stacking: -73
+>       Stacking(9, 24, mismatch-mediated coax (26,42)) Stacking(5, 66, mismatch-mediated coax (48,64)) 
+>       Two-loop closed by (9, 24) and (10, 23): -34/-39
+>        Two-loop closed by (10, 23) and (11, 22): -21/-5
+>         Two-loop closed by (11, 22) and (12, 21): -24/16
+>          One-loop closed by (12, 21): 40/40
+>        Two-loop closed by (26, 42) and (27, 41): -33/-63
+>         Two-loop closed by (27, 41) and (28, 40): -21/-30
+>          Two-loop closed by (28, 40) and (29, 39): -21/-9
+>           Two-loop closed by (29, 39) and (30, 38): -34/12
+>            One-loop closed by (30, 38): 46/46
+>        Two-loop closed by (48, 64) and (49, 63): -14/-55
+>         Two-loop closed by (49, 63) and (50, 62): -34/-41
+>          Two-loop closed by (50, 62) and (51, 61): -24/-7
+>           Two-loop closed by (51, 61) and (52, 60): -33/17
+>            One-loop closed by (52, 60): 50/50
+```
+
+Notice that in the breakdown, ever loop is listed with recursive indentation. The free energy contribution of the loop, followed by the recursive energy of the closed substructure, is given after each loop.
+
+#### Figure 2
+
+Now, consider this signal recognition particle RNA from Figure 2:
+
+```
+GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGUGUGGCUGGUAG
+((((.((((((.(((((..(((((.....((((....(((....)))....))))..)))))...))))))...)))))...)))).....
+```
+
+Here is the linear fold invocation:
+
+```
+./the_build_directory/linear_fold data_tables/
+GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGUGUGGCUGGUAG
+> GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGUGUGGCUGGUAG
+> -32.9 kcal/mol
+> ((((.((((((((((((..(((((.....((((....(((....)))....))))..)))))...))))).)).)))))...)))).....
+```
+
+And now the Aalberts & Nandagopal fold invocation (this can take a while):
+```
+./the_build_directory/an_fold data_tables/
+GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGUGUGGCUGGUAG
+> GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGUGUGGCUGGUAG
+> -33.4 kcal/mol
+> ..((((.((((...........))))..((((......))))..)))).((((((((.((((.(((...)))))))...))))))))....
+```
+
+Now let's check what the energy calculator for the linear model says for the Aalberts & Nandagopal model's prediction:
+
+```
+./the_build_directory/linear_efn data_tables/
+GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGUGUGGCUGGUAG
+..((((.((((...........))))..((((......))))..)))).((((((((.((((.(((...)))))))...))))))))....
+> GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGUGUGGCUGGUAG
+> ..((((.((((...........))))..((((......))))..)))).((((((((.((((.(((...)))))))...))))))))....
+> -32.3 kcal/mol
+```
