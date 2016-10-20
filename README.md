@@ -23,7 +23,7 @@ All programs take input and give output on the standard input and output streams
 All the folding programs expect a single argument on command line. This is the relative path to the data_tables directory (you will find this in the root directory of this project). This is a collection of files which contain the free energy parameters in RNAstructure format. We use this since RNAstructure is used to provide some basic free energy functions.
 
 #### Logarithmic Fold Program
-This program (logarithmic_fold) does MFE folding under the Turner 1999 logarithmic model of and parameters for multi-loops (see [Nearest Neighbor Database](http://rna.urmc.rochester.edu/NNDB/turner99/mb.html)). It expects a series of whitespace separated strings as input. Each string should be a primary sequence to be folded. For each primary sequence, the output will be 3 lines. The first will be the parsed version of the primary sequence (where 'X' denotes an unknown nucleotide), the second will be the MFE value, and the third will be a dot-bracket MFE structure. Here is an example usage:
+This program (logarithmic_fold) does MFE folding under the Turner 1999 logarithmic model and parameters for multi-loops (see [Nearest Neighbor Database](http://rna.urmc.rochester.edu/NNDB/turner99/mb.html)). It expects a series of whitespace separated strings as input. Each string should be a primary sequence to be folded. For each primary sequence, the output will be 3 lines. The first will be the parsed version of the primary sequence (where 'X' denotes an unknown nucleotide), the second will be the MFE value, and the third will be a dot-bracket MFE structure. Here is an example usage:
 
 ```
 ./the_build_directory/logarithmic_fold data-tables/
@@ -175,6 +175,7 @@ GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
 Out of interest, lets get an energy breakdown of the linear model's result, but using the logarithmic model's energy calculator. This will score any multi-loops in the linear prediction as though they had a logarithmic energy function.
 
 ```
+./the_build_directory/logarithmic_efn data_tables/ -describe
 GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
 ((((((...((((........)))).(((((.......))))).....(((((.......))))).))))))....
 > GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
@@ -211,7 +212,7 @@ GGGGGCAUAGCUCAGCUGGGAGAGCGCCUGCUUUGCACGCAGGAGGUCUGCGGUUCGAUCCCGCGCGCUCCCACCA
 >            One-loop closed by (52, 60): 50/50
 ```
 
-Notice that in the breakdown, ever loop is listed with recursive indentation. The free energy contribution of the loop, followed by the recursive energy of the closed substructure, is given after each loop.
+Notice that in the breakdown, every loop is listed with recursive indentation. The free energy contribution of the loop, followed by the recursive energy of the closed substructure, is given after each loop. Note, a minor oddity of the energy breakdown is that energies are reported as multiples of 0.1 kcal/mol.
 
 #### Figure 2
 
