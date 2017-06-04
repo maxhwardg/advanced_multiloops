@@ -252,3 +252,6 @@ GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGU
 > ..((((.((((...........))))..((((......))))..)))).((((((((.((((.(((...)))))))...))))))))....
 > -32.3 kcal/mol
 ```
+
+## Using Alternate Parameters
+The efn and folding programs can be modified to use non-standard multi-loop parameters. Both the AalbertsModel and NNUnpairedModel classes (see the source code in the programs/ folder for example usages of these classes) have a method called 'SetMLParams' that can be used to change the multi-loop energy model parameters. For example, the programs for the linear model use this method to simulate the linear model using a reparameterized logarithmic model.
