@@ -2,7 +2,7 @@
 // Created by max on 5/31/16.
 //
 
-#include "nn_model.hpp"
+#include "models/nn_model.hpp"
 
 using namespace std;
 
@@ -18,8 +18,7 @@ librnary::energy_t librnary::NNModel::TwoLoop(int i, int k, int l, int j) const 
 	assert(i < j && k < l && i < k && l < j);
 	if (k == i + 1 && l == j - 1)
 		return erg1(i + 1, j + 1, k + 1, l + 1, struc.get(), dt.get());
-	else
-		return erg2(i + 1, j + 1, k + 1, l + 1, struc.get(), dt.get(), 0, 0);
+	return erg2(i + 1, j + 1, k + 1, l + 1, struc.get(), dt.get(), 0, 0);
 }
 
 librnary::energy_t librnary::NNModel::Branch(int i, int j) const {
@@ -45,13 +44,13 @@ librnary::energy_t librnary::NNModel::MismatchCoax(int i, int j, int k, int l) c
 	if (i < k && l < j) { // i,j closes a multiloop
 		if (k == i + 2) // (.(_)_.)
 			return ergcoaxinterbases1(j, i, k, l, struc.get(), dt.get());
-		else // (._(_).)
-			return ergcoaxinterbases2(k, l, j, i, struc.get(), dt.get());
+		// (._(_).)
+		return ergcoaxinterbases2(k, l, j, i, struc.get(), dt.get());
 	} else if (k < i && j < l) { // k,l closes a multiloop
 		if (i == k + 2) // (.(_)._)
 			return ergcoaxinterbases2(l, k, i, j, struc.get(), dt.get());
-		else // (_.(_).)
-			return ergcoaxinterbases1(i, j, l, k, struc.get(), dt.get());
+		// (_.(_).)
+		return ergcoaxinterbases1(i, j, l, k, struc.get(), dt.get());
 	} else if (j < k) { // .(_).(_)
 		return ergcoaxinterbases1(i, j, k, l, struc.get(), dt.get());
 	} else { // (_).(_).

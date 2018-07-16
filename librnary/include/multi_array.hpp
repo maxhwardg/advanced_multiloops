@@ -1,6 +1,6 @@
 //
 // Created by max on 6/23/16.
-//
+// Contains implementations of multi-dimensional arrays optimized for RNA folding DP tables.
 
 #ifndef RNARK_MULTI_ARRAY_HPP
 #define RNARK_MULTI_ARRAY_HPP
@@ -23,7 +23,7 @@ protected:
 	std::array<unsigned, NDIMS> dims;
 	std::vector<T> elems;
 public:
-	MultiArray() {}
+	MultiArray() = default;
 	MultiArray(const std::array<unsigned, NDIMS> &_dims, const T &initv)
 		: dims(_dims) {
 		unsigned sz = 1;
@@ -63,6 +63,8 @@ public:
 		std::fill(arr, arr + c, base_val);
 	}
 	void operator=(const Array1D<T> &base) {
+		if (owner)
+			delete[] arr;
 		c = base.c;
 		if (base.owner) {
 			owner = true;
@@ -107,6 +109,8 @@ public:
 		owner = true;
 	}
 	void operator=(const Array2D<T> &base) {
+		if (owner)
+			delete[] arr;
 		c = base.c;
 		r = base.r;
 		if (base.owner) {
@@ -154,6 +158,8 @@ public:
 		(*this) = base;
 	}
 	void operator=(const Array3D<T> &base) {
+		if (owner)
+			delete[] arr;
 		c = base.c;
 		r = base.r;
 		rr = base.rr;
@@ -199,6 +205,8 @@ public:
 		(*this) = base;
 	}
 	void operator=(const Array4D<T> &base) {
+		if (owner)
+			delete[] arr;
 		c = base.c;
 		r = base.r;
 		rr = base.rr;

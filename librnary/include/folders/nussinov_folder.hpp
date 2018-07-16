@@ -10,6 +10,7 @@
 #include "vector_types.hpp"
 
 #include <vector>
+#include <functional>
 
 namespace librnary {
 /**

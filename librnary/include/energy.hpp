@@ -1,6 +1,7 @@
 //
 // Created by max on 8/14/16.
-//
+// Contains types and functions for working with units of free energy.
+
 
 #ifndef RNARK_ENERGY_HPP
 #define RNARK_ENERGY_HPP

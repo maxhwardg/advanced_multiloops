@@ -1,11 +1,13 @@
 //
 // Created by max on 8/11/16.
-//
+// Contains functions and types for working with multi-loops.
 
 #ifndef RNARK_MULTI_LOOP_HPP
 #define RNARK_MULTI_LOOP_HPP
 
 #include "ss_tree.hpp"
+#include "energy.hpp"
+#include "models/nn_model.hpp"
 
 namespace librnary {
 
@@ -25,11 +27,21 @@ struct Stacking {
 		: t(_t), i(_i), j(_j), k(_k), l(_l) {};
 
 	std::string ToString() const;
+	/**
+	 * Computes the free energy change of a stacking interaction.
+	 * @param em Energy model to use.
+	 * @param closingi 5' index of closing pair.
+	 * @param closingj 3' index of closing pair.
+	 * @return The free energy change.
+	 */
+	librnary::energy_t Score(const librnary::NNModel &em, int closingi, int closingj) const;
 };
+
 
 struct LoopRegion {
 	int i, j;
 	std::vector<librnary::BondPair> enclosed;
+	LoopRegion() = default;
 	LoopRegion(const Surface &surf)
 		: i(surf.PairI()), j(surf.PairJ()) {
 		enclosed.assign(static_cast<unsigned>(surf.NumChildren()), librnary::BondPair());
@@ -79,11 +91,26 @@ int SumAsymmetryUpperBound(unsigned num_nucleotides, unsigned min_hairpin_unpair
 
 
 /**
- * Extracts a list of multi-loops from an RNA structure.
+ * Extracts a list of multi-loops from an RNA structure as a list of LoopRegions. Is recursive.
  * @param mls The list of multi-loops. This list will have the multi-loops appended to it.
  * @param surf The structure.
  */
-void ExtractMultiLoops(std::vector<librnary::LoopRegion> &mls, const librnary::Surface &surf);
+void ExtractMultiLoopRegions(std::vector<librnary::LoopRegion> &mls, const librnary::Surface &surf);
+
+/**
+ * Extracts a list of multi-loops from an RNA structure as a list of Surfaces. Is recursive.
+ * @param mls The list of multi-loops. This list will have the multi-loops appended to it.
+ * @param surf The structure.
+ */
+void ExtractMultiLoopSurfaces(std::vector<librnary::Surface> &mls, const librnary::Surface &surf);
+
+/**
+ * Extracts a list of the sizes of branches in a multi-loop surface.
+ * @param surf A multi-loop surface.
+ * @return vector of branch sizes. The size is the number of nucleotides between the closing pair i,j inclusive.
+ */
+std::vector<int> ExtractBranchSizes(const librnary::Surface &surf);
+
 
 /**
  * @param loop A multi-loop.
@@ -111,6 +138,14 @@ int ExtractUnpaired(const librnary::LoopRegion &loop);
  * @return The sum of branch "asymmetries" according the the Matthews 2002 definition.
  */
 int ExtractSumAsymmetry(const librnary::LoopRegion &loop);
+
+/**
+ * Extracts the number of length-A and length-B segments (in the Aalberts & Nandagopal sense) from a multi-loop.
+ * @param stacks The stacking interactions.
+ * @param lr The loop region defining the multi-loop.
+ * @return A pair of (length-A count, length-B count).
+ */
+std::pair<int, int> ExtractLengthALengthB(const std::vector<Stacking> &stacks, const LoopRegion &lr);
 
 }
 

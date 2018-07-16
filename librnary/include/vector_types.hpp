@@ -1,6 +1,6 @@
 //
 // Created by max on 7/4/16.
-//
+// Vector type shortcut. Useful for declaring DP arrays.
 
 #ifndef RNARK_VECTOR_TYPES_HPP
 #define RNARK_VECTOR_TYPES_HPP
@@ -8,8 +8,6 @@
 #include <vector>
 
 #include "energy.hpp"
-
-// These are useful for declaring DP arrays.
 
 namespace librnary {
 template<typename T>

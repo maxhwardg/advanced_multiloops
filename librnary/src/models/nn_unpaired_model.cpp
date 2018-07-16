@@ -2,7 +2,7 @@
 // Created by max on 6/19/16.
 //
 
-#include "nn_unpaired_model.hpp"
+#include "models/nn_unpaired_model.hpp"
 
 librnary::energy_t librnary::NNUnpairedModel::MLBranchCost() const {
 	return ml_br_cost;
@@ -12,6 +12,8 @@ librnary::energy_t librnary::NNUnpairedModel::MLClosure(int unpaired) const {
 	return MLClosure(unpaired, 0);
 }
 librnary::energy_t librnary::NNUnpairedModel::MLClosure(int unpaired, int branches) const {
+	assert(branches >= 0);
+	assert(unpaired >= 0);
 	int branch_cost = branches * MLBranchCost();
 	if (unpaired <= ml_up_pivot)
 		return ml_init + branch_cost + unpaired * ml_up_cost;

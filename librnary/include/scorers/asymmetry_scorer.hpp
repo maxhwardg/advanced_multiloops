@@ -3,7 +3,7 @@
 //
 
 #include "nn_scorer.hpp"
-#include "asymmetry_model.hpp"
+#include "models/asymmetry_model.hpp"
 
 #ifndef RNARK_ASYMMETRY_SCORER_HPP
 #define RNARK_ASYMMETRY_SCORER_HPP

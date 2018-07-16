@@ -14,7 +14,7 @@ vector<librnary::BondPair> librnary::BondPairs(const librnary::PrimeStructure &p
 	for (int i = 0; i < sz; ++i) {
 		for (int j = i + 1; j < sz; ++j) {
 			if (librnary::ValidPair(prim[i], prim[j])) {
-				bonds.push_back(librnary::BondPair(i, j));
+				bonds.emplace_back(i, j);
 			}
 		}
 	}

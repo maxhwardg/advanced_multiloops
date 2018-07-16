@@ -4,8 +4,8 @@
 
 
 #include <iostream>
-#include <nn_unpaired_model.hpp>
-#include <nn_scorer.hpp>
+#include <models/nn_unpaired_model.hpp>
+#include <scorers/nn_scorer.hpp>
 
 using namespace std;
 

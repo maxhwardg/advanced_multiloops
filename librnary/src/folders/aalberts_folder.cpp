@@ -2,7 +2,7 @@
 // Created by max on 6/28/16.
 //
 
-#include "aalberts_folder.hpp"
+#include "folders/aalberts_folder.hpp"
 
 using namespace std;
 
@@ -60,10 +60,10 @@ void librnary::AalbertsFolder::TraceE(stack<TState> &s) {
 		}
 
 		// Coaxial stack decompositions.
-		e = decomp + Cx[k+1][i];
+		e = decomp + Cx[k + 1][i];
 		if (e < be) {
 			be = e;
-			best_decomp = {TState(CxT, k+1, i)};
+			best_decomp = {TState(CxT, k + 1, i)};
 			best_decomp.insert(best_decomp.end(), decomp_state.begin(), decomp_state.end());
 		}
 
@@ -541,7 +541,7 @@ int librnary::AalbertsFolder::Fold(const PrimeStructure &primary) {
 			if (k + 2 < i - 1)
 				best = min(best, decomp + SSScore(k + 2, i - 1) + em.Mismatch(k + 2, i - 1));
 			// Coaxial stack decompositions.
-			best = min(best,  decomp + Cx[k+1][i]);
+			best = min(best, decomp + Cx[k + 1][i]);
 		}
 		E[i] = best;
 	}
@@ -591,4 +591,7 @@ void librnary::AalbertsFolder::SetLonelyPairs(bool v) {
 
 bool librnary::AalbertsFolder::LonelyPairs() const {
 	return lonely_pairs;
+}
+void librnary::AalbertsFolder::SetModel(const librnary::AalbertsModel &_em) {
+	this->em = _em;
 }

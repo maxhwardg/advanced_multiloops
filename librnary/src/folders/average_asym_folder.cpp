@@ -2,12 +2,12 @@
 // Created by max on 8/11/16.
 //
 
-#include "average_asym_folder.hpp"
+#include "folders/average_asym_folder.hpp"
 
 #include <multi_loop.hpp>
-#include <nn_scorer.hpp>
-#include <nn_affine_model.hpp>
-#include <average_asym_scorer.hpp>
+#include <scorers/nn_scorer.hpp>
+#include "models/nn_affine_model.hpp"
+#include "scorers/average_asym_scorer.hpp"
 
 using namespace std;
 

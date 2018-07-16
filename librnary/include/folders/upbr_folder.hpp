@@ -6,7 +6,7 @@
 #define RNARK_UPBR_FOLDER_HPP
 
 #include "vector_types.hpp"
-#include "nn_unpaired_model.hpp"
+#include "models/nn_unpaired_model.hpp"
 
 #include <stack>
 

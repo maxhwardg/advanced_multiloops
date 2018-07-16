@@ -3,13 +3,14 @@
 //
 
 #include <stack>
-#include <algorithm>
 
 #include "secondary_structure.hpp"
 
 using namespace std;
 
-librnary::Matching librnary::EmptyMatching(unsigned size) {
+namespace librnary {
+
+Matching EmptyMatching(unsigned size) {
 	Matching match(size);
 	for (unsigned i = 0; i < size; ++i) {
 		match[i] = i;
@@ -17,11 +18,11 @@ librnary::Matching librnary::EmptyMatching(unsigned size) {
 	return match;
 }
 
-bool librnary::BondPair::operator<(const BondPair &other) const {
+bool BondPair::operator<(const BondPair &other) const {
 	return other.i > j;
 }
 
-librnary::Matching librnary::DotBracketToMatching(const string &db) {
+Matching DotBracketToMatching(const string &db) {
 	stack<int> s;
 	auto match = EmptyMatching(static_cast<unsigned>(db.size()));
 
@@ -38,7 +39,7 @@ librnary::Matching librnary::DotBracketToMatching(const string &db) {
 	return match;
 }
 
-string librnary::MatchingToDotBracket(const librnary::Matching &match) {
+string MatchingToDotBracket(const Matching &match) {
 	string db(match.size(), '.');
 	for (int i = 0; i < static_cast<int>(match.size()); ++i) {
 		if (match[i] > i)
@@ -49,7 +50,7 @@ string librnary::MatchingToDotBracket(const librnary::Matching &match) {
 	return db;
 }
 
-bool librnary::ValidPair(librnary::Base a, librnary::Base b) {
+bool ValidPair(Base a, Base b) {
 	switch (a) {
 		case A:
 			return b == U;
@@ -76,7 +77,7 @@ bool librnary::ValidPair(librnary::Base a, librnary::Base b) {
 	}
 }
 
-bool librnary::WatsonCrick(librnary::Base a, librnary::Base b) {
+bool WatsonCrick(Base a, Base b) {
 	switch (a) {
 		case A:
 			return b == U;
@@ -91,7 +92,7 @@ bool librnary::WatsonCrick(librnary::Base a, librnary::Base b) {
 	}
 }
 
-librnary::Matching librnary::BondPairsToMatching(const vector<librnary::BondPair> &bonds, unsigned sz) {
+Matching BondPairsToMatching(const vector<BondPair> &bonds, unsigned sz) {
 	auto match = EmptyMatching(sz);
 	for (auto &b : bonds) {
 		match[b.i] = b.j;
@@ -100,15 +101,15 @@ librnary::Matching librnary::BondPairsToMatching(const vector<librnary::BondPair
 	return match;
 }
 
-vector<librnary::BondPair> librnary::MatchingToBondPairs(const librnary::Matching &match) {
-	vector<librnary::BondPair> bonds;
+vector<BondPair> MatchingToBondPairs(const Matching &match) {
+	vector<BondPair> bonds;
 	for (int i = 0; i < static_cast<int>(match.size()); ++i)
 		if (match[i] > i)
-			bonds.push_back(BondPair(i, match[i]));
+			bonds.emplace_back(i, match[i]);
 	return bonds;
 }
 
-bool librnary::ContainsPseudoknot(const librnary::Matching &match) {
+bool ContainsPseudoknot(const Matching &match) {
 	stack<int> open;
 	for (int i = 0; i < static_cast<int>(match.size()); ++i) {
 		if (match[i] > i) {
@@ -126,8 +127,31 @@ bool librnary::ContainsPseudoknot(const librnary::Matching &match) {
 	return false;
 }
 
-bool librnary::MustBeLonelyPair(const PrimeStructure &rna, int i, int j, int min_hairpin_unpaired) {
+bool MustBeLonelyPair(const PrimeStructure &rna, int i, int j, int min_hairpin_unpaired) {
 	assert(i >= 0 && i < static_cast<int>(rna.size()) && j >= 0 && j < static_cast<int>(rna.size()));
 	return !(i - 1 >= 0 && j + 1 < static_cast<int>(rna.size()) && ValidPair(rna[i - 1], rna[j + 1]))
 		&& !(j - i - 3 >= min_hairpin_unpaired && ValidPair(rna[i + 1], rna[j - 1]));
+}
+
+std::vector<Stem> ExtractStems(const Matching &match) {
+	std::vector<Stem> stems;
+	std::vector<int> marked(match.size());
+	for (int i = 0; i < static_cast<int>(match.size()); ++i) {
+		if (marked[i])
+			continue;
+		if (match[i] == i)
+			continue;
+		marked[i] = marked[match[i]] = 1;
+		int ip = i, jp = match[i], sz = 1;
+		while (ip + 1 < jp - 1 && match[ip + 1] == jp - 1) {
+			++ip;
+			--jp;
+			++sz;
+			marked[ip] = marked[jp] = 1;
+		}
+		stems.emplace_back(BondPair(i, match[i]), sz);
+	}
+	return stems;
+}
+
 }

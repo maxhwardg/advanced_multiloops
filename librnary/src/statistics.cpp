@@ -127,7 +127,7 @@ int librnary::FalseNegatives(const librnary::Matching &matching_true, const libr
 }
 
 int librnary::FalsePositives(const librnary::Matching &matching_true, const librnary::Matching &matching_proband) {
-	return  FalseNegatives(matching_proband, matching_true);
+	return FalseNegatives(matching_proband, matching_true);
 }
 
 double librnary::Sensitivity(const librnary::Matching &mtrue, const librnary::Matching &mpred) {

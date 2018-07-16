@@ -5,7 +5,7 @@
 #ifndef RNARK_NN_UNPAIRED_FOLDER_HPP
 #define RNARK_NN_UNPAIRED_FOLDER_HPP
 
-#include "nn_unpaired_model.hpp"
+#include "models/nn_unpaired_model.hpp"
 #include "vector_types.hpp"
 
 #include <stack>
@@ -118,6 +118,12 @@ public:
 
 	/// Get the max unpaired nucleotides in a bulge/internal loop.
 	int MaxTwoLoop() const;
+
+	/**
+	 * Note that this method may make the previous call to fold invalid, as it will still assume the old model.
+	 * @param _em Sets the model to use internally to this.
+	 */
+	void SetModel(const NNUnpairedModel &_em);
 
 	NNUnpairedFolder(const NNUnpairedModel &_em)
 		: em(_em) {}

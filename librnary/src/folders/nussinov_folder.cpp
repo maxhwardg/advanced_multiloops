@@ -2,7 +2,7 @@
 // Created by max on 8/8/16.
 //
 
-#include "nussinov_folder.hpp"
+#include "folders/nussinov_folder.hpp"
 
 #include <stack>
 

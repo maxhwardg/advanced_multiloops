@@ -46,7 +46,7 @@ class BruteFolder {
 
 	};
 public:
-	BruteFolder(StructureEnumerator _enumer)
+	explicit BruteFolder(const StructureEnumerator &_enumer)
 		: enumer(_enumer) {}
 	/**
 	 * Given a primary sequence and the number of structures to find, returns a vector containing the nMFE lowest

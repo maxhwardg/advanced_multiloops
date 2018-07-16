@@ -4,8 +4,8 @@
 
 
 #include <iostream>
-#include <aalberts_scorer.hpp>
-#include <nn_scorer.hpp>
+#include <scorers/aalberts_scorer.hpp>
+#include <scorers/nn_scorer.hpp>
 
 using namespace std;
 

@@ -8,7 +8,7 @@
 #include <stack>
 
 #include "primary_structure.hpp"
-#include "aalberts_model.hpp"
+#include "models/aalberts_model.hpp"
 #include "vector_types.hpp"
 
 namespace librnary {
@@ -133,6 +133,8 @@ public:
 
 	/// Get a copy of the energy model.
 	AalbertsModel GetEM() const;
+
+	void SetModel(const AalbertsModel &em);
 
 };
 }

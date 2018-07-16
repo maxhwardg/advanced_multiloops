@@ -3,7 +3,7 @@
 //
 
 /**
- * This file contains functions and classes for enumerating or counting secondary structure elements.
+ * This file contains functions and classes for enumerating secondary structure elements.
  */
 
 #ifndef RNARK_SS_ENUMERATION_HPP
@@ -12,7 +12,7 @@
 #include <stack>
 
 #include "secondary_structure.hpp"
-#include "nn_model.hpp"
+#include "models/nn_model.hpp"
 
 namespace librnary {
 
@@ -21,7 +21,7 @@ class StructureEnumerator {
 	/// Minimum size of a hairpin loop in number of unpaired bases.
 	int min_hairpin;
 	/// The length of the RNA primary sequence being enumerated.
-	int N;
+	int N{};
 	/// Stack used during enumeration.
 	std::stack<int> s;
 	Matching match;
@@ -34,7 +34,7 @@ class StructureEnumerator {
 	template<typename Functor>
 	void EnumerateHelper(const PrimeStructure &bases, Functor &f) {
 		// Declaring these as local variables is a micro optimization, but it helps.
-		int unmatched = (int) s.size(), matched = (int) match.size();
+		int unmatched = static_cast<int>(s.size()), matched = static_cast<int>(match.size());
 		// If there are more things on the stack than we can possibly match.
 		// Then this is an impossible matching.
 		if (unmatched > N - matched)
@@ -63,7 +63,7 @@ class StructureEnumerator {
 	}
 
 public:
-	StructureEnumerator(unsigned _min_hairpin)
+	explicit StructureEnumerator(unsigned _min_hairpin)
 		: min_hairpin(_min_hairpin) {}
 
 	/// Apply some function f to a all secondary structures for a primary sequence "bases".

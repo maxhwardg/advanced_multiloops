@@ -6,7 +6,7 @@
 #define RNARK_AVERAGE_ASYM_SCORER_HPP
 
 #include "nn_scorer.hpp"
-#include "average_asym_model.hpp"
+#include "models/average_asym_model.hpp"
 
 
 namespace librnary {

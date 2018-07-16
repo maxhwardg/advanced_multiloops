@@ -38,11 +38,11 @@ public:
 	void SetMLAsymmetryCoeff(kcalmol_t v);
 	void SetStrain(energy_t v);
 	void SetMLParams(energy_t ml_init,
-						 energy_t ml_branch,
-						 energy_t ml_unpaired,
-						 energy_t strain,
-						 double ml_max_avg_asym,
-						 kcalmol_t ml_asym_mult);
+					 energy_t ml_branch,
+					 energy_t ml_unpaired,
+					 energy_t strain,
+					 double ml_max_avg_asym,
+					 kcalmol_t ml_asym_mult);
 	AverageAsymmetryModel(const std::string &data_path, const PrimeStructure &_rna)
 		: NNModel(data_path, _rna) {}
 	AverageAsymmetryModel(const std::string &data_path)

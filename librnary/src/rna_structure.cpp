@@ -23,12 +23,15 @@ unique_ptr<datatable> librnary::LoadDatatable(const string &path) {
 		strcpy(paths[i], file_path.c_str());
 	}
 
-	opendat(paths[0], paths[1], paths[2], paths[3], paths[4], paths[5],
-			paths[6], paths[7], paths[8], paths[9], paths[10], paths[11],
-			paths[12], paths[13], paths[14], paths[15], paths[16],
-			paths[17], paths[18], dt.get());
-	for (unsigned i = 0; i < 19; ++i) {
-		delete[] paths[i];
+	int rv = opendat(paths[0], paths[1], paths[2], paths[3], paths[4], paths[5],
+					 paths[6], paths[7], paths[8], paths[9], paths[10], paths[11],
+					 paths[12], paths[13], paths[14], paths[15], paths[16],
+					 paths[17], paths[18], dt.get());
+	if (rv == 0) {
+		cerr << "An error occured when loading the data tables" << endl;
+	}
+	for (char* p : paths) {
+		delete[] p;
 	}
 	return dt;
 }
@@ -66,8 +69,10 @@ std::unique_ptr<structure> librnary::LoadStructure(const librnary::PrimeStructur
 unique_ptr<structure> librnary::LoadStructure(const string &ct_file) {
 	unique_ptr<structure> seq(new structure());
 	long error_code = seq->openct(ct_file.c_str());
-	if (error_code != 0)
-		throw error_code;
+	if (error_code != 0) {
+		cerr << "Could not read " << ct_file << endl;
+		throw seq->openct(ct_file.c_str());
+	}
 	return seq;
 }
 
@@ -75,7 +80,7 @@ unique_ptr<structure> librnary::LoadSeqFile(const std::string &seq_file) {
 	unique_ptr<structure> seq(new structure());
 	long error_code = seq->openseq(seq_file.c_str());
 	if (error_code != 1)
-		throw error_code;
+		throw seq->openseq(seq_file.c_str());
 	return seq;
 }
 

@@ -2,7 +2,7 @@
 // Created by max on 8/11/16.
 //
 
-#include "average_asym_model.hpp"
+#include "models/average_asym_model.hpp"
 
 
 using namespace std;
@@ -44,7 +44,7 @@ void librnary::AverageAsymmetryModel::SetMLAsymmetryCoeff(kcalmol_t v) {
 	ml_asym_mult = v;
 }
 
-void librnary::AverageAsymmetryModel:: SetStrain(librnary::energy_t v) {
+void librnary::AverageAsymmetryModel::SetStrain(librnary::energy_t v) {
 	strain = v;
 }
 

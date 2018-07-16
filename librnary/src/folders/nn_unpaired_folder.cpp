@@ -2,9 +2,14 @@
 // Created by max on 6/19/16.
 //
 
-#include "nn_unpaired_folder.hpp"
+#include "folders/nn_unpaired_folder.hpp"
 
 using namespace std;
+
+void librnary::NNUnpairedFolder::SetModel(const NNUnpairedModel &_em) {
+	em = _em;
+}
+
 
 void librnary::NNUnpairedFolder::SetStacking(bool v) {
 	stacking = v;

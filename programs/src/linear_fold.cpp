@@ -4,13 +4,12 @@
 
 
 #include <iostream>
-#include <nn_unpaired_folder.hpp>
+#include <folders/nn_affine_folder.hpp>
 
 using namespace std;
 
 /**
  * This program allows basic folding to be done under the linear model using RNAstructure parameters.
- * Note that it might be a bit slower than expected, as it is emulated using an O(n^4) logarithmic model algorithm.
  * It expects a single argument on command line. The relative path to the data_tables/ folder, which is an
  * RNAstructure format database of free energy parameters for RNA.
  * It takes whitespace separated RNA primary sequences as input on stdin.
@@ -45,11 +44,9 @@ int main(int argc, char **argv) {
     }
 
     string data_tables_path = argv[1];
-    librnary::NNUnpairedModel model(data_tables_path);
+    librnary::NNAffineModel model(data_tables_path);
 
-    // The "999999" value acts an an effective infinity, thus simulating the linear model.
-    model.SetMLParams(93, -6, 0, 0, 999999);
-    librnary::NNUnpairedFolder folder(model);
+    librnary::NNAffineFolder folder(model);
     folder.SetLonelyPairs(false);
 
     while (cin.good()) {

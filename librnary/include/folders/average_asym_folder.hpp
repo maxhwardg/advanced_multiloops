@@ -6,7 +6,7 @@
 #define RNARK_AVERAGE_ASYM_FOLDER_HPP_HPP
 
 #include "vector_types.hpp"
-#include "average_asym_model.hpp"
+#include "models/average_asym_model.hpp"
 
 #include <stack>
 

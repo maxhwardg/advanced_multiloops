@@ -25,10 +25,10 @@ class SSTree;
  */
 class Surface {
 private:
-	const SSTree *const tree;
+	const SSTree *tree;
 	SSTreeNodeId id;
 public:
-	Surface(const SSTree *const _tree, SSTreeNodeId _id)
+	Surface(const SSTree *_tree, SSTreeNodeId _id)
 		: tree(_tree), id(_id) {}
 	/// Returns the left/5' nucleotide in the arc closing the surface.
 	int PairI() const;
@@ -44,10 +44,28 @@ public:
 	Surface Child(int idx) const;
 	/// Returns the number of children.
 	int NumChildren() const;
+	/// Get the root surface containing this surface.
+	Surface RootSurface() const;
 	/// Returns true iff the surface is an external loop surface.
 	bool IsExternalLoop() const;
 	bool operator==(const Surface &rhs) const;
 };
+
+/**
+ * Determines the loop type closed by a surface.
+ * @param surf The surface.
+ * @return The loop typ.e
+ */
+LoopType ClosedLoopType(const Surface &surf);
+
+
+/**
+ * Determines if a surface closes a stacking loop.
+ * @param surf The surface to check.
+ * @return True if surf closes a stacking region, and false otherwise.
+ */
+bool IsStacking(const Surface &surf);
+
 /**
  * SSTree is a secondary structure tree rooted at a particular pairing.
  * Secondary structure can be represented as a tree.
@@ -73,8 +91,8 @@ class SSTree {
 	void Construct(const Matching &matching, SSTreeNodeId curr, int i, int j);
 public:
 	/// Construct from Matching.
-	SSTree(const Matching &matching);
-	~SSTree() {}
+	explicit SSTree(const Matching &matching);
+	~SSTree() = default;
 	/// Returns the number of unpaired nucleotides accessible from the arc-node.
 	int Unpaired(SSTreeNodeId node_id) const;
 	/// Whether a node-arc is the external loop.

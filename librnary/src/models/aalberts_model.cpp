@@ -2,7 +2,7 @@
 // Created by max on 6/22/16.
 //
 
-#include "aalberts_model.hpp"
+#include "models/aalberts_model.hpp"
 
 using namespace std;
 
@@ -11,7 +11,11 @@ librnary::energy_t librnary::AalbertsModel::MLInit(int N, int M) const {
 	// Multiply by ten to get tenths of kcal/mol.
 	// Be careful to round AFTER this.
 	assert(pow(N, power) * a * a + pow(M, power) * b * b >= 0);
-	return KCalToEnergy(log_mult * log(pow(N, power) * a * a + pow(M, power) * b * b) + C);
+	double inner_log = pow(N, power) * a * a + pow(M, power) * b * b;
+	if (inner_log <= 0)
+		return KCalToEnergy(C);
+	else
+		return KCalToEnergy(log_mult * log(pow(N, power) * a * a + pow(M, power) * b * b) + C);
 }
 
 // The initiation cost of a multi-loop given only the relevant features.

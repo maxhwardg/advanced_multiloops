@@ -6,6 +6,34 @@
 
 using namespace std;
 
+
+bool librnary::IsStacking(const librnary::Surface &surf) {
+	return surf.NumChildren() == 1 && surf.Child(0).PairI() == surf.PairI() + 1
+		&& surf.Child(0).PairJ() == surf.PairJ() - 1;
+}
+
+librnary::LoopType librnary::ClosedLoopType(const librnary::Surface &surf) {
+	if (surf.IsExternalLoop()) {
+		return librnary::LoopType::EXTERNAL;
+	} else if (IsStacking(surf)) {
+		return librnary::LoopType::STACK;
+	}
+	librnary::LoopType loop_type;
+	if (surf.NumChildren() > 1) {
+		loop_type = librnary::LoopType::MULTI;
+	} else if (surf.NumChildren() == 0) {
+		loop_type = librnary::LoopType::HAIRPIN;
+	} else {
+		auto child = surf.Child(0);
+		if (surf.PairI() + 1 == child.PairI() || surf.PairJ() - 1 == child.PairJ()) {
+			loop_type = librnary::LoopType::BULGE;
+		} else {
+			loop_type = librnary::LoopType::INTERNAL;
+		}
+	}
+	return loop_type;
+}
+
 int librnary::Surface::PairI() const {
 	return tree->PairI(id);
 }
@@ -14,13 +42,13 @@ int librnary::Surface::PairJ() const {
 }
 
 librnary::Surface librnary::Surface::Parent() const {
-	return Surface(tree, tree->Parent(id));
+	return {tree, tree->Parent(id)};
 }
 
 vector<librnary::Surface> librnary::Surface::Children() const {
 	vector<Surface> subsurfaces;
 	for (const auto cid : tree->adj_list[id]) {
-		subsurfaces.push_back(Surface(tree, cid));
+		subsurfaces.emplace_back(tree, cid);
 	}
 	return subsurfaces;
 }
@@ -30,7 +58,7 @@ int librnary::Surface::NumChildren() const {
 }
 
 librnary::Surface librnary::Surface::Child(int idx) const {
-	return Surface(tree, tree->Child(id, idx));
+	return {tree, tree->Child(id, idx)};
 }
 
 bool librnary::Surface::IsExternalLoop() const {
@@ -43,6 +71,10 @@ int librnary::Surface::Unpaired() const {
 
 bool librnary::Surface::operator==(const Surface &rhs) const {
 	return rhs.id == id && rhs.tree == tree;
+}
+
+librnary::Surface librnary::Surface::RootSurface() const {
+	return this->tree->RootSurface();
 }
 
 void librnary::SSTree::Construct(const Matching &matching, int i, int j) {
@@ -114,10 +146,10 @@ librnary::SSTreeNodeId librnary::SSTree::RootId() const {
 }
 
 librnary::Surface librnary::SSTree::RootSurface() const {
-	return Surface(this, RootId());
+	return {this, RootId()};
 }
 librnary::Surface librnary::SSTree::GetSurface(SSTreeNodeId id) const {
-	return Surface(this, id);
+	return {this, id};
 }
 
 librnary::SSTreeNodeId librnary::SSTree::Parent(SSTreeNodeId node_id) const {

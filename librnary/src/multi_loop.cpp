@@ -5,6 +5,7 @@
 #include "multi_loop.hpp"
 
 #include <sstream>
+#include <models/nn_model.hpp>
 
 using namespace std;
 
@@ -49,6 +50,31 @@ string librnary::Stacking::ToString() const {
 	return ss.str();
 }
 
+librnary::energy_t librnary::Stacking::Score(const librnary::NNModel &em, int closingi, int closingj) const {
+	assert(closingi < closingj);
+	if (t == MISMATCH)
+		if (i == closingi && j == closingj)
+			return em.ClosingMismatch(i, j);
+		else
+			return em.Mismatch(i, j);
+	else if (t == DANLGE5)
+		if (i == closingi && j == closingj)
+			return em.ClosingFiveDangle(i, j);
+		else
+			return em.FiveDangle(i, j);
+	else if (t == DANLGE3)
+		if (i == closingi && j == closingj)
+			return em.ClosingThreeDangle(i, j);
+		else
+			return em.ThreeDangle(i, j);
+	else if (t == FLUSHCX)
+		return em.FlushCoax(i, j, k, l);
+	else if (t == MMCX)
+		return em.MismatchCoax(i, j, k, l);
+	else
+		return 0;
+}
+
 bool librnary::StackingFeature::IsBranch() const {
 	return i != j;
 }
@@ -79,14 +105,37 @@ vector<librnary::StackingFeature> librnary::MLStackingFeatures(const LoopRegion 
 	}
 	return fts;
 }
-void librnary::ExtractMultiLoops(std::vector<librnary::LoopRegion> &mls, const librnary::Surface &surf) {
+void librnary::ExtractMultiLoopRegions(std::vector<librnary::LoopRegion> &mls, const librnary::Surface &surf) {
 	if (surf.NumChildren() >= 2 && !surf.IsExternalLoop()) {
-		mls.push_back(surf);
+		mls.emplace_back(surf);
 	}
 	for (const auto &cs : surf.Children()) {
-		ExtractMultiLoops(mls, cs);
+		ExtractMultiLoopRegions(mls, cs);
 	}
 }
+
+void librnary::ExtractMultiLoopSurfaces(std::vector<librnary::Surface> &mls, const librnary::Surface &surf) {
+	if (surf.NumChildren() >= 2 && !surf.IsExternalLoop()) {
+		mls.emplace_back(surf);
+	}
+	for (const auto &cs : surf.Children()) {
+		ExtractMultiLoopSurfaces(mls, cs);
+	}
+}
+
+
+std::vector<int> librnary::ExtractBranchSizes(const librnary::Surface &surf) {
+	assert(surf.NumChildren() >= 2 && !surf.IsExternalLoop());
+	vector<int> ans;
+	for (const auto &cs : surf.Children()) {
+		ans.push_back(cs.PairJ()-cs.PairI()+1);
+	}
+	auto root = surf.RootSurface();
+	int rna_sz = root.PairJ()-root.PairI()-1;
+	ans.push_back(rna_sz - (surf.PairJ()-surf.PairI()-1));
+	return ans;
+}
+
 
 int librnary::ExtractBranches(const librnary::LoopRegion &loop) {
 	assert(loop.enclosed.size() >= 2);
@@ -128,4 +177,26 @@ int librnary::ExtractSumAsymmetry(const librnary::LoopRegion &loop) {
 	sum_asymmetry += abs(prev_up - next_up);
 	sum_asymmetry += abs(next_up - first_up);
 	return sum_asymmetry;
+}
+std::pair<int, int> librnary::ExtractLengthALengthB(const vector<librnary::Stacking> &stacks,
+													 const librnary::LoopRegion &lr) {
+	int branches = ExtractBranches(lr);
+	int unpaired = ExtractUnpaired(lr);
+	int lengthA = 0, lengthB = 0;
+
+	for (const Stacking &stack : stacks) {
+		if (stack.t == MMCX) {
+			branches -= 2;
+			unpaired -= 2;
+			lengthA += 2;
+		} else if (stack.t == FLUSHCX) {
+			branches -= 2;
+			lengthA += 2;
+		}
+	}
+
+	lengthA += branches + unpaired;
+	lengthB += branches;
+
+	return {lengthA, lengthB};
 }

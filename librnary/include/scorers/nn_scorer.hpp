@@ -37,7 +37,7 @@ struct SurfaceScore {
 	librnary::energy_t AUGUclosure = 0, stacking = 0, ml_closure;
 	ClosureFeaturesMap ml_closure_features;
 	std::vector<Stacking> stacks;
-	std::vector<std::unique_ptr<SurfaceScore>> subsurfaces;
+	std::vector<std::shared_ptr<SurfaceScore>> subsurfaces;
 	SurfaceScore(const Surface &surf) : surface(surf), loop_score(0), recursive_score(0),
 										AUGUclosure(0), stacking(0), ml_closure(0) {}
 	virtual std::string Describe(char indent_char, unsigned indent_level) const {
@@ -108,7 +108,7 @@ private:
 		trace_stack.push(make_tuple(start_push, start_pull, start_s));
 		vector<Stacking> output;
 		while (!trace_stack.empty()) {
-			auto state = trace_stack.top();
+			tuple<int, int, int> state = trace_stack.top();
 			trace_stack.pop();
 			int push = get<0>(state), pull = get<1>(state), s = get<2>(state);
 			// Base cases.
@@ -324,7 +324,7 @@ public:
 	}
 
 	/// Scores an internal surface. Is recursive.
-	energy_t ScoreInternal(const librnary::Surface &surf) const {
+	virtual energy_t ScoreInternal(const librnary::Surface &surf) const {
 		assert(surf.PairI() >= 0 && static_cast<int>(em.RNA().size()) > surf.PairJ());
 		if (surf.NumChildren() == 0)
 			return em.OneLoop(surf.PairI(), surf.PairJ());
@@ -342,7 +342,7 @@ public:
 		return sum;
 	}
 
-	SurfaceScore TraceInternal(const librnary::Surface &surf) const {
+	virtual SurfaceScore TraceInternal(const librnary::Surface &surf) const {
 		SurfaceScore sscore(surf);
 		if (surf.NumChildren() == 0) {
 			sscore.loop_score = em.OneLoop(surf.PairI(), surf.PairJ());
@@ -436,42 +436,47 @@ public:
 		return best;
 	}
 
+	/**
+	 * Computes the score of optimal ML stacking configuration.
+	 * @param surf The multi-loop.
+	 * @return A tuple of optimal ML stacking score and ML closure score.
+	 */
 	virtual std::tuple<energy_t, energy_t> OptimalMLConfig(const Surface &surf) const {
-		return std::make_tuple(OptimalMLStacking(surf), em.MLClosure(surf));
+		return std::tuple<energy_t, energy_t>(OptimalMLStacking(surf), em.MLClosure(surf));
 	}
 
 
 	/// Returns a tuple of stacking interation list, and closure features.
-	std::tuple<std::vector<Stacking>, ClosureFeaturesMap> TraceMLConfig(const Surface &surf) const {
+	virtual std::tuple<std::vector<Stacking>, ClosureFeaturesMap> TraceMLConfig(const Surface &surf) const {
 		using namespace std;
 
 		LoopRegion loop(surf);
 
-		auto dp_table = MakeStackingTable(surf);
+		auto dp_table = MakeStackingTable(LoopRegion(surf));
 		// Normal.
 		vector<Stacking> stacks = TraceStacking(surf, dp_table, 0, 0, 0);
-		stacks.push_back(Stacking(NONE, loop.i, loop.j));
+		stacks.emplace_back(NONE, loop.i, loop.j);
 		energy_t best = dp_table[0][0][0];
 		// 3' dangle.
 		energy_t score = dp_table[1][0][0] + em.ClosingThreeDangle(loop.i, loop.j);
 		if (score < best) {
 			best = score;
 			stacks = TraceStacking(surf, dp_table, 1, 0, 0);
-			stacks.push_back(Stacking(DANLGE3, loop.i, loop.j));
+			stacks.emplace_back(DANLGE3, loop.i, loop.j);
 		}
 		// 5' dangle.
 		score = dp_table[0][1][0] + em.ClosingFiveDangle(loop.i, loop.j);
 		if (score < best) {
 			best = score;
 			stacks = TraceStacking(surf, dp_table, 0, 1, 0);
-			stacks.push_back(Stacking(DANLGE5, loop.i, loop.j));
+			stacks.emplace_back(DANLGE5, loop.i, loop.j);
 		}
 		// Mismatch
 		score = dp_table[1][1][0] + em.ClosingMismatch(loop.i, loop.j);
 		if (score < best) {
 			best = score;
 			stacks = TraceStacking(surf, dp_table, 1, 1, 0);
-			stacks.push_back(Stacking(MISMATCH, loop.i, loop.j));
+			stacks.emplace_back(MISMATCH, loop.i, loop.j);
 		}
 		// Coaxial stacking.
 		// Note that in the if statements we can safely assume that loop.enclosed has size >= 2.
@@ -483,7 +488,7 @@ public:
 			if (score < best) {
 				best = score;
 				stacks = TraceStacking(surf, dp_table, 0, 0, 1);
-				stacks.push_back(Stacking(FLUSHCX, loop.i, loop.j, loop.enclosed[0].i, loop.enclosed[0].j));
+				stacks.emplace_back(FLUSHCX, loop.i, loop.j, loop.enclosed[0].i, loop.enclosed[0].j);
 			}
 		}
 
@@ -495,8 +500,7 @@ public:
 				if (score < best) {
 					best = score;
 					stacks = TraceStacking(surf, dp_table, 1, 0, 1);
-					stacks.push_back(
-						Stacking(MMCX, loop.enclosed[0].i, loop.enclosed[0].j, loop.i, loop.j));
+					stacks.emplace_back(MMCX, loop.enclosed[0].i, loop.enclosed[0].j, loop.i, loop.j);
 				}
 			}
 			// (.(_)_.)
@@ -506,8 +510,7 @@ public:
 				if (score < best) {
 					best = score;
 					stacks = TraceStacking(surf, dp_table, 0, 1, 1);
-					stacks.push_back(
-						Stacking(MMCX, loop.i, loop.j, loop.enclosed[0].i, loop.enclosed[0].j));
+					stacks.emplace_back(MMCX, loop.i, loop.j, loop.enclosed[0].i, loop.enclosed[0].j);
 				}
 			}
 		}
@@ -527,7 +530,7 @@ public:
 			if (score < best) {
 				best = score;
 				stacks = TraceStacking(loop_coaxright, dp_table_Cxright, 0, 0, 0);
-				stacks.push_back(Stacking(FLUSHCX, loop.i, loop.j, final_helix.i, final_helix.j));
+				stacks.emplace_back(FLUSHCX, loop.i, loop.j, final_helix.i, final_helix.j);
 			}
 		}
 		// (_.(_).)
@@ -537,7 +540,7 @@ public:
 				if (score < best) {
 					best = score;
 					stacks = TraceStacking(loop_coaxright, dp_table_Cxright, 0, 1, 0);
-					stacks.push_back(Stacking(MMCX, final_helix.i, final_helix.j, loop.i, loop.j));
+					stacks.emplace_back(MMCX, final_helix.i, final_helix.j, loop.i, loop.j);
 				}
 			}
 			// (._(_).)
@@ -545,7 +548,7 @@ public:
 			if (score < best) {
 				best = score;
 				stacks = TraceStacking(loop_coaxright, dp_table_Cxright, 1, 0, 0);
-				stacks.push_back(Stacking(MMCX, loop.i, loop.j, final_helix.i, final_helix.j));
+				stacks.emplace_back(MMCX, loop.i, loop.j, final_helix.i, final_helix.j);
 			}
 		}
 		assert(best == std::get<0>(OptimalMLConfig(surf)));
@@ -561,8 +564,12 @@ public:
 		return em.MaxMFE();
 	}
 
-	NNScorer(EnergyModel _em)
-		: em(_em), stacking(true) {}
+	EnergyModel GetEnergyModel() const {
+		return this->em;
+	}
+
+	explicit NNScorer(EnergyModel _em)
+		: em(_em) {}
 
 	NNScorer(EnergyModel _em, bool _stacking)
 		: em(_em), stacking(_stacking) {}
