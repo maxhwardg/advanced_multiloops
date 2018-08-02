@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 
 	options.add_options()
 		("d,data_path", "Path to data_tables", cxxopts::value<string>()->default_value("data_tables/"))
-		("c,ct_path", "Path to the folder of CTs", cxxopts::value<string>()->default_value("RNAs/ArchiveIII/"))
+		("c,ct_path", "Path to the folder of CTs", cxxopts::value<string>()->default_value("data_set/ct_files/"))
 		("t,threads",
 		 "Number of threads to use",
 		 cxxopts::value<int>()->default_value(std::to_string(std::thread::hardware_concurrency())))
