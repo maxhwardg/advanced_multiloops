@@ -260,7 +260,7 @@ GGUCCCCUCGCAACGAUCAGCCGUGAACCCGGUCAGGCCCGGAAGGGAGCAGCCGCAGCGGUGACAUUGUGUGCCGGGGU
 The efn and folding programs can be modified to use non-standard multi-loop parameters. Both the AalbertsModel and NNUnpairedModel classes (see the source code in the programs/ folder for example usages of these classes) have a method called 'SetMLParams' that can be used to change the multi-loop energy model parameters. For example, the programs for the linear model use this method to simulate the linear model using a reparameterized logarithmic model.
 
 ## Parameter Training Algorithms
-The parameter training programs are train_linear, train_logarithmic, and train_an. They all have similar input requirements. Instructions for flags can be used by calling a program with the flag "-h".
+The parameter training programs are train_linear, train_logarithmic, and train_an. They all have similar input requirements. Instructions for flags can be found by calling a program with the flag "-h".
 
 ### Basic Usage
 All parameter training algorithms need three pieces of input to function. The path to the data tables, which are the parameters for the entire nearest neighbor model as per RNAstructure; the path to the data set, which is a folder containing all the .ct files for RNAs used in training; a list of .ct file names to use for training. If run from the root directory of this repository, the default paths for the data tables and data set will work out of the box. To change them, use the flag "-h" to see how. The list of .ct files to use should be given via standard input. The folder "data_sets/" contains several .ctset files. These are the lists of .ct files used for the paper. The folder "data_sets/ct_files" contains the archive of training data used in the paper.
